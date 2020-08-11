@@ -159,124 +159,229 @@ dataset10=train_set[train_set.attack_type.isin(attack10)]
 dataset10=pd.concat([dataset10,normal_dataset[5395*9:5395*10]], ignore_index=True)
 dataset10=dataset10.sample(frac=1).reset_index(drop=True)
 
-# dataset1['attack_type'].value_counts()
-# dataset2['attack_type'].value_counts()
-# dataset3['attack_type'].value_counts()
-# dataset4['attack_type'].value_counts()
-# dataset5['attack_type'].value_counts()
-# dataset6['attack_type'].value_counts()
-# dataset7['attack_type'].value_counts()
-# dataset8['attack_type'].value_counts()
-# dataset9['attack_type'].value_counts()
-# dataset10['attack_type'].value_counts()
+# dataset1['attack_category'].value_counts()
+# dataset2['attack_category'].value_counts()
+# dataset3['attack_category'].value_counts()
+# dataset4['attack_category'].value_counts()
+# dataset5['attack_category'].value_counts()
+# dataset6['attack_category'].value_counts()
+# dataset7['attack_category'].value_counts()
+# dataset8['attack_category'].value_counts()
+# dataset9['attack_category'].value_counts()
+# dataset10['attack_category'].value_counts()
 
 # train_set['attack_type'].value_counts()
 
-
-
-
-
-train_set['attack_category'].value_counts()
-training_dataset_prepared['attack_type'].value_counts()
-
-train_set.drop(['attack_type'], axis=1, inplace=True)
-test_set.drop(['attack_type'], axis=1, inplace=True)
-
-train_y=train_set['attack_category']
-train_set.drop(['attack_category'], axis=1, inplace=True)
-train_x=train_set
-# train_x.drop(['attack_type'], axis=1, inplace=True)
-# temp_columns=train_x.columns
-# train_x=sc_x.fit_transform(train_x)
-# train_x=pd.DataFrame(train_x)
-# train_x.columns=temp_columns
-
-    #for test set
+#--------------------------for test set-----------------------
 
 test_y=test_set['attack_category']
-# test_set.drop(['attack_type'], axis=1, inplace=True)
 test_x=test_set
 test_x.drop(['attack_category'], axis=1, inplace=True)
+test_x.drop(['attack_type'], axis=1, inplace=True)
 
-
-
-#enccding the categorical varaible
-train_y=pd.get_dummies(train_y)
+#encoding the test_y
 test_y=pd.get_dummies(test_y)
 
-# nodes_list=[]
+
+#------------------splitting the dataset of train into train_x and train_y------------
+from sklearn.model_selection import train_test_split
+header_list=['benign', 'dos', 'probe', 'r2l', 'u2r']
+
+dataset1_train_y=dataset1['attack_category']
+dataset1.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset1_train_x=dataset1
+dataset1_train_y=pd.get_dummies(dataset1_train_y)
+header_diff=set(header_list)-set(dataset1_train_y.columns)
+for header in header_diff:
+    dataset1_train_y[header]=0
+
+dataset2_train_y=dataset2['attack_category']
+dataset2.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset2_train_x=dataset2
+dataset2_train_y=pd.get_dummies(dataset2_train_y)
+header_diff=set(header_list)-set(dataset2_train_y.columns)
+for header in header_diff:
+    dataset2_train_y[header]=0
+
+dataset3_train_y=dataset3['attack_category']
+dataset3.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset3_train_x=dataset3
+dataset3_train_y=pd.get_dummies(dataset3_train_y)
+header_diff=set(header_list)-set(dataset3_train_y.columns)
+for header in header_diff:
+    dataset3_train_y[header]=0
+
+
+dataset4_train_y=dataset4['attack_category']
+dataset4.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset4_train_x=dataset4
+dataset4_train_y=pd.get_dummies(dataset4_train_y)
+header_diff=set(header_list)-set(dataset4_train_y.columns)
+for header in header_diff:
+    dataset4_train_y[header]=0
+    
+dataset5_train_y=dataset5['attack_category']
+dataset5.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset5_train_x=dataset5
+dataset5_train_y=pd.get_dummies(dataset5_train_y)
+header_diff=set(header_list)-set(dataset5_train_y.columns)
+for header in header_diff:
+    dataset5_train_y[header]=0
+
+dataset6_train_y=dataset6['attack_category']
+dataset6.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset6_train_x=dataset5
+dataset6_train_y=pd.get_dummies(dataset6_train_y)
+header_diff=set(header_list)-set(dataset6_train_y.columns)
+for header in header_diff:
+    dataset6_train_y[header]=0
+    
+dataset7_train_y=dataset7['attack_category']
+dataset7.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset7_train_x=dataset7
+dataset7_train_y=pd.get_dummies(dataset7_train_y)
+header_diff=set(header_list)-set(dataset7_train_y.columns)
+for header in header_diff:
+    dataset7_train_y[header]=0
+
+dataset8_train_y=dataset8['attack_category']
+dataset8.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset8_train_x=dataset8
+dataset8_train_y=pd.get_dummies(dataset8_train_y)
+header_diff=set(header_list)-set(dataset8_train_y.columns)
+for header in header_diff:
+    dataset8_train_y[header]=0
+
+dataset9_train_y=dataset9['attack_category']
+dataset9.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset9_train_x=dataset9
+dataset9_train_y=pd.get_dummies(dataset9_train_y)
+header_diff=set(header_list)-set(dataset9_train_y.columns)
+for header in header_diff:
+    dataset9_train_y[header]=0
+    
+dataset10_train_y=dataset10['attack_category']
+dataset10.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset10_train_x=dataset10
+dataset10_train_y=pd.get_dummies(dataset10_train_y)
+header_diff=set(header_list)-set(dataset10_train_y.columns)
+for header in header_diff:
+    dataset10_train_y[header]=0
+
+
+
+
 
 #making a global model by intializing parameters to zero
 from sklearn.ensemble import RandomForestClassifier
-classifier=RandomForestClassifier()
+model=RandomForestClassifier()
 
 from sklearn.model_selection import GridSearchCV
 
 
         
 
-class server:
-    def __init__(self, dataset_test_x,dataset_test_y):
+class Server:
+    def __init__(self, dataset_test_x,dataset_test_y,global_model):
         self.dataset_test_x=dataset_test_x
         self.dataset_test_y=dataset_test_y
+        self.global_model=global_model
         
     # def parameter(self,param):
     #     self.param=param
     
-    global_model=classifier
+    # global_model=classifier
     
     def receive_paramter(self, n_estimators1):
         self.n_estimators_list=[]
         self.n_estimators_list.append(n_estimators1)
-        self.sum_estimator=sum(n_estimators_list)
-        self.final_estimator=int(sum_estimator/10)
         
-    
-    def update_model():
-        global_model.set_params(self,n_estimators=final_estimator)
+    def sum_estimator(self):
+        self.sum_estimator=sum(self.n_estimators_list)
+        self.final_estimator=int(self.sum_estimator/10)
+        self.n_estimators_list=0
+            
         
-    def split_datsaet():
-        train_server_train_x=dataset_test_x[:15000]
-        train_server_train_y=dataset_test_y[:15000]
-        test_server_test_x=dataset_test_x[15000:]
-        test_server_test_y=dataset_test_y[15000:]
-        
-    def test_updated_model():
-        global_model.fit(train_server_train_x,train_server_train_y)
-        predicted_value=global_model.predict(test_server_test_x)
-        
+    def update_model(self):
+        self.global_model.set_params(self,n_estimators=self.final_estimator)
+            
+    def split_datsaet(self):
+        self.train_server_train_x=dataset_test_x[:15000]
+        self.train_server_train_y=dataset_test_y[:15000]
+        self.test_server_test_x=dataset_test_x[15000:]
+        self.test_server_test_y=dataset_test_y[15000:]
+            
+    def test_updated_model(self):
+        self.global_model.fit(self.train_server_train_x,self.train_server_train_y)
+        self.predicted_value=self.global_model.predict(self.test_server_test_x)
+            
         from sklearn.metrics import precision_score
-        precision_model=precision_score(test_server_test_y,predicted_value,average='micro')     
-        print('The precision of global model is ', precision_model)
-        
+        self.precision_model=precision_score(self.test_server_test_y,self.predicted_value,average='micro')     
+        print('The precision of global model is ', self.precision_model)
+        # self.precision_list=[]
+        # self.precision_list.append(precision_model)
+            
         #calculating loss function
-        param_grid=[{'n_estimators':final_estimator}]
-        global_model.fit(train_server_train_x,train_server_train_y)
-        grid_search=GridSearchCV(global_model, param_grid, cv=5, scoring="neg_mean_squared_error", return_train_score=True)
-        grid_search.fit(test_server_test_x,test_server_test_y)
-        best=grid_search.best_params_
-        
+        self.param_grid=[{'n_estimators':self.final_estimator}]
+        self.global_model.fit(self.train_server_train_x,self.train_server_train_y)
+        self.grid_search=GridSearchCV(self.global_model, self.param_grid, cv=5, scoring="neg_mean_squared_error", return_train_score=True)
+        self.grid_search.fit(self.test_server_test_x,self.test_server_test_y)
+        self.best=self.grid_search.best_params_
+            
         cvres=grid_search.cv_results_['mean_test_score']
         rmse_score=np.sqrt(cvres)
         print('The rmse score of global model is ', rmse_score)
-        
+        # rmse_score_list=[]
+        # rmse_score_list.append(rmse_score)
+
+    precision_list=[]
+    rmse_score_list=[]
 
         
-class nodes:
-    def __init__(self, dataset_train_x,dataset_train_y,n_estimators):
+    def store_result(self):
+        # self.precision_list=[]
+        self.precision_list.append(self.precision_model)
+        # rmse_score_list=[]
+        rmse_score_list.append(rmse_score)
+        
+    def return_final_scores(self):
+        return self.precision_list
+        return self.rmse_score_list
+    
+    def start_server(self):
+        self.sum_estimator()
+        self.update_model()
+        # self.split_datsaet()
+        self.test_updated_model()
+        self.store_result()
+                
+                
+# x=[1,2]
+# y=[3,4]      
+# server1=server(x,y,classifier)
+# server1.variable
+        
+#creating a server 1
+server1=Server(test_x,test_y,model)
+        
+class Nodes:
+    def __init__(self, dataset_train_x,dataset_train_y,n_estimators,model):
         self.dataset_train_x=dataset_train_x
         self.dataset_train_y=dataset_train_y
         self.n_estimators=n_estimators
-        self.min_sample_split=min_sample_split
+        # self.min_sample_split=min_sample_split
         self.model=model
+        
+        from sklearn.model_selection import GridSearchCV
+
     
        
-    def learn():
-        param_grid=[{'n_estimators':n_estimators}]
-        model.fit(dataset_train_x,dataset_train_y)
-        grid_search=GridSearchCV(model, param_grid, cv=5, scoring="neg_mean_squared_error", return_train_score=True)
-        grid_search.fit(dataset_train_x,dataset_train_y)
-        best_estimator=grid_search.best_params_
+    def learn(self):
+        self.param_grid=[{'n_estimators':self.n_estimators}]
+        self.model.fit(self.dataset_train_x,self.dataset_train_y)
+        self.grid_search=GridSearchCV(self.model, self.param_grid, cv=5, scoring="neg_mean_squared_error", return_train_score=True)
+        self.grid_search.fit(self.dataset_train_x,self.dataset_train_y)
+        self.best_estimator=self.grid_search.best_params_
         
         # best_estimator=[]   #keeping the record of best estimator in a list
         # best_estimator.append(best['n_estimators'])
@@ -286,9 +391,14 @@ class nodes:
         # cvres=min(grid_search.cv_results_['mean_test_score'])
         # rmse_score.append(cvres)
         
-    def send():
-        server1=server(test_x,test_y)
-        server1.receive_paramter(best_estimator)
+    def send(self):
+        # self.server1=Server(test_x,test_y)
+        server1.receive_paramter(self.best_estimator)
+        
+    def start_node(self):
+        self.learn()
+        self.send()
+        
         
 
 #Making the  parameters
@@ -307,6 +417,16 @@ parameter=[400,500,600]
 parameter=[700,800,900]
 
 
+node1=Nodes(train_x_1,train_y_1,parameter1,model)
+node2=Nodes()
+node3=Nodes()
+node4=Nodes()
+node5=Nodes()
+node6=Nodes()
+node7=Nodes()
+node8=Nodes()
+node9=Nodes()
+node10=Nodes()
 
 
         
