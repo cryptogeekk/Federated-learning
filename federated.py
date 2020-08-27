@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Wed Aug 19 18:48:40 2020
+
+@author: krishna
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Fri Jul 31 23:19:09 2020
 
 @author: krishna
@@ -91,10 +99,22 @@ training_dataset_prepared.drop(['num_outbound_cmds'], axis=1, inplace=True)     
 training_dataset_prepared.replace([np.inf,-np.inf],np.nan,inplace=True)                  #handling the infinite value
 training_dataset_prepared.fillna(training_dataset_prepared.mean(),inplace=True)
 
-#Doing the feature scaling
-# from sklearn.preprocessing import StandardScaler
-# sc_x=StandardScaler()
-
+#scaling the data
+from sklearn.preprocessing import StandardScaler
+sc_x=StandardScaler()
+# training_dataset_columns=list(training_dataset_prepared.columns)
+# training_dataset_columns.remove('attack_category')
+# training_dataset_columns.remove('attack_type')
+# training_dataset_prepared=sc_x.fit_transform(training_dataset_prepared[training_dataset_columns])
+category_dropped=pd.DataFrame()
+category_dropped['attack_type']=training_dataset_prepared['attack_type']
+category_dropped['attack_category']=training_dataset_prepared['attack_category']
+training_dataset_prepared.drop(['attack_type','attack_category'],axis=1,inplace=True)
+training_dataset_columns=list(training_dataset_prepared.columns)
+training_dataset_prepared=sc_x.fit_transform(training_dataset_prepared)
+training_dataset_prepared=pd.DataFrame(training_dataset_prepared)
+training_dataset_prepared.columns=training_dataset_columns
+training_dataset_prepared=pd.concat([training_dataset_prepared,category_dropped],axis=1)
 
 #splitting the dataset into train set and test set
 from sklearn.model_selection import train_test_split
@@ -102,6 +122,7 @@ train_set,test_set=train_test_split(training_dataset_prepared,test_size=0.2,rand
     #sorting the train_set and test set
 pd.DataFrame.sort_index(train_set,axis=0,ascending=True,inplace=True) 
 pd.DataFrame.sort_index(test_set,axis=0,ascending=True,inplace=True) 
+
 
 #Processing the dataset for federated learning
 normal_dataset=train_set[train_set.attack_type.eq('normal')]
@@ -174,13 +195,15 @@ dataset10=dataset10.sample(frac=1).reset_index(drop=True)
 
 #--------------------------for test set-----------------------
 
-test_y=test_set['attack_category']
-test_x=test_set
-test_x.drop(['attack_category'], axis=1, inplace=True)
-test_x.drop(['attack_type'], axis=1, inplace=True)
+# test_y=test_set['attack_category']
+# test_x=test_set
+# test_x.drop(['attack_category'], axis=1, inplace=True)
+# test_x.drop(['attack_type'], axis=1, inplace=True)
 
-#encoding the test_y
-test_y=pd.get_dummies(test_y)
+# #encoding the test_y
+# # from sklearn.preprocessing import LabelEncoder
+# # encoder=LabelEncoder()
+# test_y=pd.get_dummies(test_y)
 
 
 #------------------splitting the dataset of train into train_x and train_y------------
@@ -191,245 +214,416 @@ dataset1_train_y=dataset1['attack_category']
 dataset1.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset1_train_x=dataset1
 dataset1_train_y=pd.get_dummies(dataset1_train_y)
-header_diff=set(header_list)-set(dataset1_train_y.columns)
-for header in header_diff:
-    dataset1_train_y[header]=0
+# header_diff=set(header_list)-set(dataset1_train_y.columns)
+# for header in header_diff:
+#     dataset1_train_y[header]=0
+
 
 dataset2_train_y=dataset2['attack_category']
 dataset2.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset2_train_x=dataset2
 dataset2_train_y=pd.get_dummies(dataset2_train_y)
-header_diff=set(header_list)-set(dataset2_train_y.columns)
-for header in header_diff:
-    dataset2_train_y[header]=0
+# header_diff=set(header_list)-set(dataset2_train_y.columns)
+# for header in header_diff:
+#     dataset2_train_y[header]=0
 
 dataset3_train_y=dataset3['attack_category']
 dataset3.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset3_train_x=dataset3
 dataset3_train_y=pd.get_dummies(dataset3_train_y)
-header_diff=set(header_list)-set(dataset3_train_y.columns)
-for header in header_diff:
-    dataset3_train_y[header]=0
+# header_diff=set(header_list)-set(dataset3_train_y.columns)
+# for header in header_diff:
+#     dataset3_train_y[header]=0
 
 
 dataset4_train_y=dataset4['attack_category']
 dataset4.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset4_train_x=dataset4
 dataset4_train_y=pd.get_dummies(dataset4_train_y)
-header_diff=set(header_list)-set(dataset4_train_y.columns)
-for header in header_diff:
-    dataset4_train_y[header]=0
+# header_diff=set(header_list)-set(dataset4_train_y.columns)
+# for header in header_diff:
+#     dataset4_train_y[header]=0
     
 dataset5_train_y=dataset5['attack_category']
 dataset5.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset5_train_x=dataset5
 dataset5_train_y=pd.get_dummies(dataset5_train_y)
-header_diff=set(header_list)-set(dataset5_train_y.columns)
-for header in header_diff:
-    dataset5_train_y[header]=0
+# header_diff=set(header_list)-set(dataset5_train_y.columns)
+# for header in header_diff:
+#     dataset5_train_y[header]=0
 
 dataset6_train_y=dataset6['attack_category']
 dataset6.drop(['attack_category','attack_type'], axis=1, inplace=True)
-dataset6_train_x=dataset5
+dataset6_train_x=dataset6
 dataset6_train_y=pd.get_dummies(dataset6_train_y)
-header_diff=set(header_list)-set(dataset6_train_y.columns)
-for header in header_diff:
-    dataset6_train_y[header]=0
+# header_diff=set(header_list)-set(dataset6_train_y.columns)
+# for header in header_diff:
+#     dataset6_train_y[header]=0
     
 dataset7_train_y=dataset7['attack_category']
 dataset7.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset7_train_x=dataset7
 dataset7_train_y=pd.get_dummies(dataset7_train_y)
-header_diff=set(header_list)-set(dataset7_train_y.columns)
-for header in header_diff:
-    dataset7_train_y[header]=0
+# header_diff=set(header_list)-set(dataset7_train_y.columns)
+# for header in header_diff:
+#     dataset7_train_y[header]=0
 
 dataset8_train_y=dataset8['attack_category']
 dataset8.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset8_train_x=dataset8
 dataset8_train_y=pd.get_dummies(dataset8_train_y)
-header_diff=set(header_list)-set(dataset8_train_y.columns)
-for header in header_diff:
-    dataset8_train_y[header]=0
+# header_diff=set(header_list)-set(dataset8_train_y.columns)
+# for header in header_diff:
+#     dataset8_train_y[header]=0
 
 dataset9_train_y=dataset9['attack_category']
 dataset9.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset9_train_x=dataset9
 dataset9_train_y=pd.get_dummies(dataset9_train_y)
-header_diff=set(header_list)-set(dataset9_train_y.columns)
-for header in header_diff:
-    dataset9_train_y[header]=0
+# header_diff=set(header_list)-set(dataset9_train_y.columns)
+# for header in header_diff:
+#     dataset9_train_y[header]=0
     
 dataset10_train_y=dataset10['attack_category']
 dataset10.drop(['attack_category','attack_type'], axis=1, inplace=True)
 dataset10_train_x=dataset10
 dataset10_train_y=pd.get_dummies(dataset10_train_y)
-header_diff=set(header_list)-set(dataset10_train_y.columns)
-for header in header_diff:
-    dataset10_train_y[header]=0
+# header_diff=set(header_list)-set(dataset10_train_y.columns)
+# for header in header_diff:
+#     dataset10_train_y[header]=0
+
+
+#------------Preparing dataset for prsonalized evaluation
+normal_test_dataset=test_set[test_set.attack_type.eq('normal')]     #13386/10 =1338
+
+dataset1_test=test_set[test_set.attack_type.isin(attack1)]
+dataset1_test=pd.concat([dataset1_test,normal_test_dataset[:1338]],ignore_index=True)
+dataset1_test=dataset1_test.sample(frac=1).reset_index(drop=True)
+dataset1_test_y=dataset1_test['attack_category']
+dataset1_test_x=dataset1_test
+dataset1_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset1_test_y=pd.get_dummies(dataset1_test_y)
+
+
+dataset2_test=test_set[test_set.attack_type.isin(attack2)]
+dataset2_test=pd.concat([dataset2_test,normal_test_dataset[1338:1338*2]],ignore_index=True)
+dataset2_test=dataset2_test.sample(frac=1).reset_index(drop=True)
+dataset2_test_y=dataset2_test['attack_category']
+dataset2_test_x=dataset2_test
+dataset2_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset2_test_y=pd.get_dummies(dataset2_test_y)
+
+dataset3_test=test_set[test_set.attack_type.isin(attack3)]
+dataset3_test=pd.concat([dataset3_test,normal_test_dataset[1338*2:1338*3]],ignore_index=True)
+dataset3_test=dataset3_test.sample(frac=1).reset_index(drop=True)
+dataset3_test_y=dataset3_test['attack_category']
+dataset3_test_x=dataset3_test
+dataset3_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset3_test_y=pd.get_dummies(dataset3_test_y)
+
+dataset4_test=test_set[test_set.attack_type.isin(attack4)]
+dataset4_test=pd.concat([dataset4_test,normal_test_dataset[1338*3:1338*4]],ignore_index=True)
+dataset4_test=dataset4_test.sample(frac=1).reset_index(drop=True)
+dataset4_test_y=dataset4_test['attack_category']
+dataset4_test_x=dataset4_test
+dataset4_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset4_test_y=pd.get_dummies(dataset4_test_y)
+
+dataset5_test=test_set[test_set.attack_type.isin(attack5)]
+dataset5_test=pd.concat([dataset5_test,normal_test_dataset[1338*4:1338*5]],ignore_index=True)
+dataset5_test=dataset5_test.sample(frac=1).reset_index(drop=True)
+dataset5_test_y=dataset5_test['attack_category']
+dataset5_test_x=dataset5_test
+dataset5_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset5_test_y=pd.get_dummies(dataset5_test_y)
+
+dataset6_test=test_set[test_set.attack_type.isin(attack6)]
+dataset6_test=pd.concat([dataset6_test,normal_test_dataset[1338*5:1338*6]],ignore_index=True)
+dataset6_test=dataset6_test.sample(frac=1).reset_index(drop=True)
+dataset6_test_y=dataset6_test['attack_category']
+dataset6_test_x=dataset6_test
+dataset6_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset6_test_y=pd.get_dummies(dataset6_test_y)
+
+dataset7_test=test_set[test_set.attack_type.isin(attack7)]
+dataset7_test=pd.concat([dataset7_test,normal_test_dataset[1338*6:1338*7]],ignore_index=True)
+dataset7_test=dataset7_test.sample(frac=1).reset_index(drop=True)
+dataset7_test_y=dataset7_test['attack_category']
+dataset7_test_x=dataset7_test
+dataset7_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset7_test_y=pd.get_dummies(dataset7_test_y)
+
+dataset8_test=test_set[test_set.attack_type.isin(attack8)]
+dataset8_test=pd.concat([dataset8_test,normal_test_dataset[1338*7:1338*8]],ignore_index=True)
+dataset8_test=dataset8_test.sample(frac=1).reset_index(drop=True)
+dataset8_test_y=dataset8_test['attack_category']
+dataset8_test_x=dataset8_test
+dataset8_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset8_test_y=pd.get_dummies(dataset8_test_y)
+
+dataset9_test=test_set[test_set.attack_type.isin(attack9)]
+dataset9_test=pd.concat([dataset9_test,normal_test_dataset[1338*8:1338*9]],ignore_index=True)
+dataset9_test=dataset9_test.sample(frac=1).reset_index(drop=True)
+dataset9_test_y=dataset9_test['attack_category']
+dataset9_test_x=dataset9_test
+dataset9_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset9_test_y=pd.get_dummies(dataset9_test_y)
+
+dataset10_test=test_set[test_set.attack_type.isin(attack10)]
+dataset10_test=pd.concat([dataset10_test,normal_test_dataset[1338*9:1338*10]],ignore_index=True)
+dataset10_test=dataset10_test.sample(frac=1).reset_index(drop=True)
+dataset10_test_y=dataset10_test['attack_category']
+dataset10_test_x=dataset10_test
+dataset10_test_x.drop(['attack_category','attack_type'], axis=1, inplace=True)
+dataset10_test_y=pd.get_dummies(dataset10_test_y)
 
 
 
 
 
-#making a global model by intializing parameters to zero
-from sklearn.ensemble import RandomForestClassifier
-model=RandomForestClassifier()
 
-from sklearn.model_selection import GridSearchCV
+#-----------------making a global model by intializing parameters to zero
+# from sklearn.ensemble import RandomForestClassifier
+# model=RandomForestClassifier()
+# model.fit(dataset1_train_x,dataset1_train_y)
+# model_predict=model.predict(test_x)
+# model_predict=pd.DataFrame(model_predict)
+# model_predict.columns=test_y.columns
 
+# from sklearn.metrics import precision_score,f1_score
+# precision_score=precision_score(test_y,model_predict,average='micro')
 
-        
+# # total_dataset_list=[]
+# # total_dataset_list.append(dataset1_train_x)
 
-class Server:
-    def __init__(self, dataset_test_x,dataset_test_y,global_model):
-        self.dataset_test_x=dataset_test_x
-        self.dataset_test_y=dataset_test_y
-        self.global_model=global_model
-        
-    # def parameter(self,param):
-    #     self.param=param
+# class_proba=model.predict_proba(test_x)
+# class_proba1=pd.DataFrame()
+
+# temp=class_proba[0]
+# temp2=temp.shape
+# temp2[1]
+
+# temp.shape[1]
+# temp1=np.array([row[1] for row in temp])
+# size(temp)
+
+# name=['benign','dos','probe','r2l','u2r']
+
+# for values in class_proba:
+#     if values.shape[1]=2
+#         temp=np.array([row1] for row in values)
+#         if class_proba1.columns in name
+#             class_proba1['benign']=temp
+
+# class_proba1['dos']
+
+#     loss_function=[]
+#     loss_list=['benign','dos','probe','u2r','r2l']
+
+#     for columns in loss_list:
+#         loss_function.append(mean_squared_error(test_y[columns],class_proba[columns]))
     
-    # global_model=classifier
+#     average_loss=int(sum(loss_function)/5)
+#     print("The loss in ", round1, ' is average_loss')
     
-    def receive_paramter(self, n_estimators1):
-        self.n_estimators_list=[]
-        self.n_estimators_list.append(n_estimators1)
-        
-    def sum_estimator(self):
-        self.sum_estimator=sum(self.n_estimators_list)
-        self.final_estimator=int(self.sum_estimator/10)
-        self.n_estimators_list=0
-            
-        
-    def update_model(self):
-        self.global_model.set_params(self,n_estimators=self.final_estimator)
-            
-    def split_datsaet(self):
-        self.train_server_train_x=dataset_test_x[:15000]
-        self.train_server_train_y=dataset_test_y[:15000]
-        self.test_server_test_x=dataset_test_x[15000:]
-        self.test_server_test_y=dataset_test_y[15000:]
-            
-    def test_updated_model(self):
-        self.global_model.fit(self.train_server_train_x,self.train_server_train_y)
-        self.predicted_value=self.global_model.predict(self.test_server_test_x)
-            
-        from sklearn.metrics import precision_score
-        self.precision_model=precision_score(self.test_server_test_y,self.predicted_value,average='micro')     
-        print('The precision of global model is ', self.precision_model)
-        # self.precision_list=[]
-        # self.precision_list.append(precision_model)
-            
-        #calculating loss function
-        self.param_grid=[{'n_estimators':self.final_estimator}]
-        self.global_model.fit(self.train_server_train_x,self.train_server_train_y)
-        self.grid_search=GridSearchCV(self.global_model, self.param_grid, cv=5, scoring="neg_mean_squared_error", return_train_score=True)
-        self.grid_search.fit(self.test_server_test_x,self.test_server_test_y)
-        self.best=self.grid_search.best_params_
-            
-        cvres=grid_search.cv_results_['mean_test_score']
-        rmse_score=np.sqrt(cvres)
-        print('The rmse score of global model is ', rmse_score)
-        # rmse_score_list=[]
-        # rmse_score_list.append(rmse_score)
-
-    precision_list=[]
-    rmse_score_list=[]
-
-        
-    def store_result(self):
-        # self.precision_list=[]
-        self.precision_list.append(self.precision_model)
-        # rmse_score_list=[]
-        rmse_score_list.append(rmse_score)
-        
-    def return_final_scores(self):
-        return self.precision_list
-        return self.rmse_score_list
-    
-    def start_server(self):
-        self.sum_estimator()
-        self.update_model()
-        # self.split_datsaet()
-        self.test_updated_model()
-        self.store_result()
-                
-                
-# x=[1,2]
-# y=[3,4]      
-# server1=server(x,y,classifier)
-# server1.variable
-        
-#creating a server 1
-server1=Server(test_x,test_y,model)
-        
-class Nodes:
-    def __init__(self, dataset_train_x,dataset_train_y,n_estimators,model):
-        self.dataset_train_x=dataset_train_x
-        self.dataset_train_y=dataset_train_y
-        self.n_estimators=n_estimators
-        # self.min_sample_split=min_sample_split
-        self.model=model
-        
-        from sklearn.model_selection import GridSearchCV
 
     
-       
-    def learn(self):
-        self.param_grid=[{'n_estimators':self.n_estimators}]
-        self.model.fit(self.dataset_train_x,self.dataset_train_y)
-        self.grid_search=GridSearchCV(self.model, self.param_grid, cv=5, scoring="neg_mean_squared_error", return_train_score=True)
-        self.grid_search.fit(self.dataset_train_x,self.dataset_train_y)
-        self.best_estimator=self.grid_search.best_params_
-        
-        # best_estimator=[]   #keeping the record of best estimator in a list
-        # best_estimator.append(best['n_estimators'])
-        
-        # rmse_scores=[]  #keeping the record of rmse score in a list
-        
-        # cvres=min(grid_search.cv_results_['mean_test_score'])
-        # rmse_score.append(cvres)
-        
-    def send(self):
-        # self.server1=Server(test_x,test_y)
-        server1.receive_paramter(self.best_estimator)
-        
-    def start_node(self):
-        self.learn()
-        self.send()
-        
-        
+    
 
-#Making the  parameters
-parameter1=[5,10,15]
-parameter1=[20,25,30]
-parameter1=[35,40,45]
-parameter1=[50,55,60]
-parameter1=[65,70,75]
-parameter1=[80,85,90]
-parameter1=[95,100,105]
-parameter1=[110,115,120]
-parameter=[120,125,130]
-parameter=[135,150,170]
-parameter=[190,250,300]
-parameter=[400,500,600]
-parameter=[700,800,900]
+from sklearn.linear_model import SGDClassifier
+model=SGDClassifier()
+
+def learn(n_estimator):
+    n_estimator_list=[]
+    print('--------------Calculating ---------------')
+    from sklearn.model_selection import GridSearchCV
+    n_estimator_list=[]
+    param_grid={'n_estimators':n_estimator}
+    grid_search=GridSearchCV(model,param_grid,cv=5,scoring="neg_mean_squared_error", return_train_score=True)
+    grid_search.fit(dataset1_train_x,dataset1_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 1---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset2_train_x,dataset2_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 2---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset3_train_x,dataset3_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 3---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset4_train_x,dataset4_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 4---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset5_train_x,dataset5_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 5---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset6_train_x,dataset6_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 6---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset7_train_x,dataset7_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 7---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset8_train_x,dataset8_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 8---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset9_train_x,dataset9_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 9---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    grid_search.fit(dataset10_train_x,dataset10_train_y)
+    n_estimator_list.append(grid_search.best_params_['n_estimators'])
+    print('--------------Calculating for node 10---------------')
+    print(grid_search.best_params_['n_estimators'])
+    
+    average=int(sum(n_estimator_list)/10)
+    print(average)
+    return average
 
 
-node1=Nodes(train_x_1,train_y_1,parameter1,model)
-node2=Nodes()
-node3=Nodes()
-node4=Nodes()
-node5=Nodes()
-node6=Nodes()
-node7=Nodes()
-node8=Nodes()
-node9=Nodes()
-node10=Nodes()
+
+n_estimator=[20,100,250]
+returned_average=learn(n_estimator)
+
+returned_average=350
+average_parameter={'n_estimators':returned_average}
+from sklearn.metrics import precision_score,mean_squared_error,f1_score
+model.set_params(**average_parameter)
+
+precision_list=[]
+loss_list=[]
+#-----------------------------------------------------------------------
+def calculate_accuracy(train_x,train_y,test_x,test_y):
+    loss_list=['benign','dos','probe','u2r','r2l']
+    model.fit(train_x,train_y)
+    model_predicted=model.predict(test_x)
+    model_predicted=pd.DataFrame(model_predicted)
+    model_predicted.columns=test_y.columns
+        
+    from sklearn.metrics import precision_score,mean_squared_error,f1_score,hinge_loss
+    precision_score=precision_score(test_y,model_predicted, average='micro')  
+    print('The precision at  is ', precision_score)
+    class_proba=model.predict_proba(test_x)
+    class_proba_managed=pd.DataFrame()
+    # temp=class_proba[0]
+    # [row[1] for row in temp]
+    class_proba_managed=class_proba[1]
+    class_proba_managed=pd.DataFrame(class_proba_managed)
+    class_proba_managed.columns=test_y.columns
+    
+        
+    loss_function=[]
+    
+    for columns in test_y.columns:
+        loss_function.append(hinge_loss(test_y[columns],class_proba_managed[columns]))
+        
+    average_loss=(sum(loss_function))/2
+    print("The average loss is",average_loss)
+  
+    # return precision_score,average_loss
+
+def launch_round():
+    calculate_accuracy(dataset1_train_x,dataset1_train_y,dataset1_test_x,dataset1_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset2_train_x,dataset2_train_y,dataset2_test_x,dataset2_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset3_train_x,dataset3_train_y,dataset3_test_x,dataset3_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset4_train_x,dataset4_train_y,dataset4_test_x,dataset4_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset5_train_x,dataset5_train_y,dataset5_test_x,dataset5_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset6_train_x,dataset6_train_y,dataset6_test_x,dataset6_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset7_train_x,dataset7_train_y,dataset7_test_x,dataset7_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset8_train_x,dataset8_train_y,dataset8_test_x,dataset8_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset9_train_x,dataset9_train_y,dataset9_test_x,dataset9_test_y)
+    print("#######################################")
+    calculate_accuracy(dataset10_train_x,dataset10_train_y,dataset10_test_x,dataset10_test_y)
+    print("#######################################")
 
 
-        
-        
-        
-        
+launch_round()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def calculate(dataset_x,dataset_y):
+    loss_list=['benign','dos','probe','u2r','r2l']
+    model.fit(dataset_x,dataset_y)
+    model_predicted=model.predict(test_x)
+    model_predicted=pd.dataframe(model_predicted)
+    model_predicted.columns=loss_list
+    
+    from sklearn.metrics import precision_score,mean_squared_error,f1_score
+    precision_score=precision_score(test_y,model_predicted, average='micro')  
+    print("The precision at round ", round1, ' is ', precision_score)
+    class_proba=model.predict_proba(test_x)
+    
+    loss_function=[]
+
+    for columns in loss_list:
+        loss_function.append(mean_squared_error(test_y[columns],class_proba[columns]))
+    
+    average_loss=int(sum(loss_function)/5)
+    print("The loss in ", round1, ' is average_loss')
+
+
+def test_result(returned_average,round1):
+    average_parameter={'n_estimators':returned_average}
+    from sklearn.metrics import precision_score,mean_squared_error,f1_score
+    model.set_params(**average_parameter)
+    
+    calculate(dataset1_train_x,dataset1_train_y)
+    
+    
+returned_average=learn(n_estimator)
+test_result(returned_average,1)
+
+ 
+    
+    
+ 
+
+# def execute(n_estimator):
+#     learn(dataset1_train_x,dataset1_train_y,n_estimator)    
+#     learn(dataset2_train_x,dataset2_train_y,n_estimator)  
+#     learn(dataset3_train_x,dataset3_train_y,n_estimator)  
+#     learn(dataset4_train_x,dataset4_train_y,n_estimator)  
+#     learn(dataset5_train_x,dataset5_train_y,n_estimator)  
+#     learn(dataset6_train_x,dataset6_train_y,n_estimator)  
+#     learn(dataset7_train_x,dataset7_train_y,n_estimator)  
+#     learn(dataset8_train_x,dataset8_train_y,n_estimator)  
+#     learn(dataset9_train_x,dataset9_train_y,n_estimator)  
+#     learn(dataset10_train_x,dataset10_train_y,n_estimator)  
+    
+# execute(n_estimator)
